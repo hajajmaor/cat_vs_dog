@@ -1,16 +1,17 @@
 # cat_vs_dog
 
-A new Flutter project.
+Flutter project - done with the course :
+"Deep Learning Course with Flutter & Python - Build 6 AI Apps"
+https://www.udemy.com/course/flutter-deeplearning-course/
 
-## Getting Started
+This project is about finding if the image contain a cat or a dog.
 
-This project is a starting point for a Flutter application.
+This project was made in order to train in developing applications for iOS using Flutter framework.
 
-A few resources to get you started if this is your first Flutter project:
+###
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+app icon:
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- google image search - https://www.google.co.il/search?q=cat%20vs%20dog&tbm=isch&hl=en&hl=en&tbs=il%3Aol&sa=X&ved=0CAAQ1vwEahcKEwi4m8_S4PjrAhUAAAAAHQAAAAAQAg&biw=763&bih=783#imgrc=mcNgWJUv_EWR8M
+
+## "Commercial & other licenses" marked in the search terms.
