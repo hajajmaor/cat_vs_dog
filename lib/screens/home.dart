@@ -10,11 +10,15 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     if (Platform.isIOS)
       return CupertinoPageScaffold(
-        child: HomeBody(),
+        child: SafeArea(
+          child: HomeBody(),
+        ),
       );
     else
       return Scaffold(
-        body: HomeBody(),
+        body: SafeArea(
+          child: HomeBody(),
+        ),
       );
   }
 }
@@ -31,6 +35,7 @@ class HomeBody extends StatefulWidget {
 class _HomeBodyState extends State<HomeBody> {
   bool _loading = true;
   File _image;
+  //each item in _output is a Map : keys(index,label,confidence)
   List _output;
   final _picker = ImagePicker();
 
@@ -127,7 +132,7 @@ class _HomeBodyState extends State<HomeBody> {
                         ),
                         _output != null
                             ? Text(
-                                '${_output[0]}',
+                                '${_output[0]['label']}',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 20,
@@ -136,6 +141,9 @@ class _HomeBodyState extends State<HomeBody> {
                             : Container(),
                       ],
                     ),
+            ),
+            SizedBox(
+              height: 20,
             ),
             Container(
               child: Row(
