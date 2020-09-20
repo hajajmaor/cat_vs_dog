@@ -14,4 +14,4 @@ app icon:
 
 - google image search - https://www.google.co.il/search?q=cat%20vs%20dog&tbm=isch&hl=en&hl=en&tbs=il%3Aol&sa=X&ved=0CAAQ1vwEahcKEwi4m8_S4PjrAhUAAAAAHQAAAAAQAg&biw=763&bih=783#imgrc=mcNgWJUv_EWR8M
 
-## "Commercial & other licenses" marked in the search terms.
+# "Commercial & other licenses" marked in the search terms.
