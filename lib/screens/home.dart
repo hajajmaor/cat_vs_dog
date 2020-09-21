@@ -1,21 +1,24 @@
 import 'dart:io';
 
+import 'package:cat_vs_dog/service/image_classify_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:tflite/tflite.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class Home extends StatelessWidget {
+  final backgroudColor = Colors.black87;
   @override
   Widget build(BuildContext context) {
     if (Platform.isIOS)
       return CupertinoPageScaffold(
+        backgroundColor: backgroudColor,
         child: SafeArea(
           child: HomeBody(),
         ),
       );
     else
       return Scaffold(
+        backgroundColor: backgroudColor,
         body: SafeArea(
           child: HomeBody(),
         ),
@@ -23,61 +26,11 @@ class Home extends StatelessWidget {
   }
 }
 
-class HomeBody extends StatefulWidget {
-  const HomeBody({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  _HomeBodyState createState() => _HomeBodyState();
-}
-
-class _HomeBodyState extends State<HomeBody> {
-  bool _loading = true;
-  File _image;
-  //each item in _output is a Map : keys(index,label,confidence)
-  List _output;
-  final _picker = ImagePicker();
-
-  Future classifyImage(File image) async {
-    var output = await Tflite.runModelOnImage(
-      path: image.path,
-      numResults: 2,
-      threshold: 0.5,
-      imageStd: 127.5,
-      imageMean: 127.5,
-    );
-    setState(() {
-      _output = output;
-      _loading = false;
-    });
-  }
-
-  Future loadModel() async {
-    await Tflite.loadModel(
-      model: 'assets/tflite/model_unquant.tflite',
-      labels: 'assets/tflite/labels.txt',
-    );
-  }
-
-  @override
-  void initState() {
-    loadModel().then((value) {
-      setState(() {});
-    });
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    Tflite.close();
-    super.dispose();
-  }
-
+class HomeBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var _imageService = Provider.of<ImageClassifyService>(context);
     return Container(
-      color: Colors.black87,
       padding: const EdgeInsets.symmetric(
         horizontal: 24,
       ),
@@ -110,37 +63,41 @@ class _HomeBodyState extends State<HomeBody> {
             ),
             Container(
               width: MediaQuery.of(context).size.width * 0.8,
-              child: _loading
-                  ? Column(
-                      children: [
-                        Image.asset('assets/cat.png'),
-                        SizedBox(
-                          height: 50,
+              child: Consumer<ImageClassifyService>(
+                  builder: (context, value, child) {
+                if (value.image == null || value.output == null) {
+                  return Column(
+                    children: [
+                      Image.asset('assets/cat.png'),
+                      SizedBox(
+                        height: 50,
+                      ),
+                    ],
+                  );
+                } else if (value.output != null) {
+                  return Column(
+                    children: [
+                      Container(
+                        height: 250,
+                        child: Image.file(
+                          value.image,
                         ),
-                      ],
-                    )
-                  : Column(
-                      children: [
-                        Container(
-                          height: 250,
-                          child: Image.file(
-                            _image,
-                          ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        '${value.output[0]['label']}',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
                         ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        _output != null
-                            ? Text(
-                                '${_output[0]['label']}',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                ),
-                              )
-                            : Container(),
-                      ],
-                    ),
+                      )
+                    ],
+                  );
+                } else
+                  return Container();
+              }),
             ),
             SizedBox(
               height: 20,
@@ -151,9 +108,9 @@ class _HomeBodyState extends State<HomeBody> {
                 children: [
                   RaisedButton(
                     color: Colors.amber[600],
-                    onPressed: pickGalleryImage,
+                    onPressed: _imageService.pickGalleryImage,
                     child: Text(
-                      'Take a photo',
+                      'Choose a photo',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -165,10 +122,13 @@ class _HomeBodyState extends State<HomeBody> {
                   ),
                   RaisedButton(
                     color: Colors.amber[600],
-                    onPressed: pickImage,
+                    onPressed: _imageService.pickImage,
                     child: Text(
                       'Camera Roll',
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                      ),
                     ),
                   ),
                 ],
@@ -178,27 +138,5 @@ class _HomeBodyState extends State<HomeBody> {
         ),
       ),
     );
-  }
-
-  Future pickImage() async {
-    var image = await _picker.getImage(
-      source: ImageSource.camera,
-    );
-    if (image == null) return null;
-    setState(() {
-      _image = File(image.path);
-    });
-    classifyImage(_image);
-  }
-
-  Future pickGalleryImage() async {
-    var image = await _picker.getImage(
-      source: ImageSource.gallery,
-    );
-    if (image == null) return null;
-    setState(() {
-      _image = File(image.path);
-    });
-    classifyImage(_image);
   }
 }

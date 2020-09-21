@@ -1,11 +1,18 @@
 import 'dart:io';
 
+import 'package:cat_vs_dog/service/image_classify_service.dart';
 import 'package:cat_vs_dog/splash_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider<ImageClassifyService>(
+      create: (context) => ImageClassifyService(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
